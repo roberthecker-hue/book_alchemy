@@ -2,31 +2,40 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autor hinzufügen</title>
 </head>
 <body>
-    <p><a href="/">← Zurück zur Bibliothek</a></p>
+    <p><a href="{{ url_for('home') }}">← Zurück zur Bibliothek</a></p>
     <h1>Neuen Autor hinzufügen</h1>
 
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <ul style="color: green;">
-        {% for message in messages %}
-          <li>{{ message }}</li>
+        <ul style="list-style: none; padding: 0;">
+        {% for category, message in messages %}
+          <li style="color: {% if category == 'error' %}red{% else %}green{% endif %}; font-weight: bold;">
+            {{ message }}
+          </li>
         {% endfor %}
         </ul>
       {% endif %}
     {% endwith %}
 
     <form method="POST">
-        <label>Name:</label><br>
-        <input type="text" name="name" required><br><br>
+        <div>
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required>
+        </div><br>
 
-        <label>Geburtsdatum:</label><br>
-        <input type="date" name="birthdate"><br><br>
+        <div>
+            <label for="birthdate">Geburtsdatum:</label><br>
+            <input type="date" id="birthdate" name="birthdate">
+        </div><br>
 
-        <label>Todesdatum (falls zutreffend):</label><br>
-        <input type="date" name="date_of_death"><br><br>
+        <div>
+            <label for="date_of_death">Todesdatum (falls zutreffend):</label><br>
+            <input type="date" id="date_of_death" name="date_of_death">
+        </div><br>
 
         <button type="submit">Autor speichern</button>
     </form>
