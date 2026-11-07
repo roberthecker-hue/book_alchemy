@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Meine digitale Bibliothek</title>
+</head>
+<body>
+    <h1>📚 Digitale Bibliothek</h1>
+
+    <!-- Erfolgs- und Info-Meldungen (Flash) -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: green;">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <p>
+        <a href="/add_author">Autor hinzufügen</a> |
+        <a href="/add_book">Buch hinzufügen</a>
+    </p>
+
+    <!-- Suchformular -->
+    <form method="GET" action="/" style="margin-bottom: 20px;">
+        <input type="text" name="q" placeholder="Nach Buchtitel suchen..." value="{{ search_query or '' }}">
+        <button type="submit">Suchen</button>
+        {% if search_query %}
+            <a href="/">Suche zurücksetzen</a>
+        {% endif %}
+    </form>
+
+    <h2>Bücherliste</h2>
+
+    <!-- Sortierung -->
+    <p>
+        Sortieren nach:
+        <a href="/?sort_by=title{% if search_query %}&q={{ search_query }}{% endif %}">Titel</a> |
+        <a href="/?sort_by=author{% if search_query %}&q={{ search_query }}{% endif %}">Autor</a>
+    </p>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        {% for book in books %}
+            <div style="border: 1px solid #ccc; padding: 15px; width: 200px; border-radius: 8px;">
+                <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg"
+                     alt="Cover für {{ book.title }}"
+                     style="width: 100%; height: auto; display: block; margin-bottom: 10px;">
+
+                <h3>{{ book.title }}</h3>
+                <p><strong>Autor:</strong> {{ book.author.name }}</p>
+                <p><strong>Erscheinungsjahr:</strong> {{ book.publication_year or 'Unbekannt' }}</p>
+                <p><small>ISBN: {{ book.isbn }}</small></p>
+
+                <!-- Buch löschen Formular -->
+                <form method="POST" action="/book/{{ book.id }}/delete" onsubmit="return confirm('Möchtest du dieses Buch wirklich löschen?');" style="margin-top: 10px;">
+                    <button type="submit" style="background-color: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        Buch löschen
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <p>Keine Bücher gefunden, die den Kriterien entsprechen.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
