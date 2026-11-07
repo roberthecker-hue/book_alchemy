@@ -1,0 +1,22 @@
+# Virtuelle Umgebung (Python venv)
+.venv/
+venv/
+ENV/
+
+# Python Cache & Artefakte
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite Datenbank (lokale Testdaten)
+data/*.sqlite
+*.sqlite3
+*.db
+
+# Umgebungsvariablen & Secrets
+.env
+
+# IDE & Editor-Konfigurationen
+.vscode/
+.idea/
+.DS_Store
