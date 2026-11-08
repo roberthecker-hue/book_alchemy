@@ -1,53 +1,36 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buch hinzufügen</title>
-</head>
-<body>
-    <p><a href="{{ url_for('home') }}">← Zurück zur Bibliothek</a></p>
-    <h1>Neues Buch hinzufügen</h1>
+{% extends "base.html" %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul style="list-style: none; padding: 0;">
-        {% for category, message in messages %}
-          <li style="color: {% if category == 'error' %}red{% else %}green{% endif %}; font-weight: bold;">
-            {{ message }}
-          </li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+{% block title %}Buch hinzufügen - BookAlchemy{% endblock %}
 
-    <form method="POST">
-        <div>
-            <label for="title">Titel:</label><br>
+{% block content %}
+    <h3 style="font-size: 1.1rem; color: var(--text-dark); font-weight: 700; margin-bottom: 20px;">Neues Buch hinzufügen</h3>
+
+    <form method="POST" style="max-width: 420px;">
+        <div style="margin-bottom: 14px;">
+            <label for="title" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Titel:</label>
             <input type="text" id="title" name="title" required>
-        </div><br>
+        </div>
 
-        <div>
-            <label for="isbn">ISBN:</label><br>
+        <div style="margin-bottom: 14px;">
+            <label for="isbn" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">ISBN:</label>
             <input type="text" id="isbn" name="isbn" required>
-        </div><br>
+        </div>
 
-        <div>
-            <label for="publication_year">Erscheinungsjahr:</label><br>
+        <div style="margin-bottom: 14px;">
+            <label for="publication_year" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Erscheinungsjahr:</label>
             <input type="number" id="publication_year" name="publication_year">
-        </div><br>
+        </div>
 
-        <div>
-            <label for="author_id">Autor auswählen:</label><br>
+        <div style="margin-bottom: 20px;">
+            <label for="author_id" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Autor auswählen:</label>
             <select id="author_id" name="author_id" required>
                 <option value="">-- Bitte wählen --</option>
                 {% for author in authors %}
                     <option value="{{ author.id }}">{{ author.name }}</option>
                 {% endfor %}
             </select>
-        </div><br>
+        </div>
 
-        <button type="submit">Buch speichern</button>
+        <button type="submit" class="btn" style="width: 100%;">Buch speichern</button>
     </form>
-</body>
-</html>
+{% endblock %}

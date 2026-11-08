@@ -1,43 +1,26 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autor hinzufügen</title>
-</head>
-<body>
-    <p><a href="{{ url_for('home') }}">← Zurück zur Bibliothek</a></p>
-    <h1>Neuen Autor hinzufügen</h1>
+{% extends "base.html" %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul style="list-style: none; padding: 0;">
-        {% for category, message in messages %}
-          <li style="color: {% if category == 'error' %}red{% else %}green{% endif %}; font-weight: bold;">
-            {{ message }}
-          </li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+{% block title %}Autor hinzufügen - BookAlchemy{% endblock %}
 
-    <form method="POST">
-        <div>
-            <label for="name">Name:</label><br>
+{% block content %}
+    <h3 style="font-size: 1.1rem; color: var(--text-dark); font-weight: 700; margin-bottom: 20px;">Neuen Autor hinzufügen</h3>
+
+    <form method="POST" style="max-width: 420px;">
+        <div style="margin-bottom: 14px;">
+            <label for="name" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Name:</label>
             <input type="text" id="name" name="name" required>
-        </div><br>
+        </div>
 
-        <div>
-            <label for="birthdate">Geburtsdatum:</label><br>
+        <div style="margin-bottom: 14px;">
+            <label for="birthdate" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Geburtsdatum:</label>
             <input type="date" id="birthdate" name="birthdate">
-        </div><br>
+        </div>
 
-        <div>
-            <label for="date_of_death">Todesdatum (falls zutreffend):</label><br>
+        <div style="margin-bottom: 20px;">
+            <label for="date_of_death" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Todesdatum (falls zutreffend):</label>
             <input type="date" id="date_of_death" name="date_of_death">
-        </div><br>
+        </div>
 
-        <button type="submit">Autor speichern</button>
+        <button type="submit" class="btn" style="width: 100%;">Autor speichern</button>
     </form>
-</body>
-</html>
+{% endblock %}

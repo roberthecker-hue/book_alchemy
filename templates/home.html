@@ -1,72 +1,54 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meine digitale Bibliothek</title>
-</head>
-<body>
-    <h1>📚 Digitale Bibliothek</h1>
+{% extends "base.html" %}
 
-    <!-- Flash-Meldungen mit Fehler-/Erfolgsunterscheidung -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul style="list-style: none; padding: 0;">
-        {% for category, message in messages %}
-          <li style="color: {% if category == 'error' %}red{% else %}green{% endif %}; font-weight: bold;">
-            {{ message }}
-          </li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-
-    <p>
-        <a href="{{ url_for('add_author') }}">Autor hinzufügen</a> |
-        <a href="{{ url_for('add_book') }}">Buch hinzufügen</a>
-    </p>
-
-    <!-- Suchformular -->
-    <form method="GET" action="{{ url_for('home') }}" style="margin-bottom: 20px;">
-        <label for="search-input">Buchtitel suchen:</label>
-        <input type="text" id="search-input" name="q" placeholder="Nach Buchtitel suchen..." value="{{ search_query or '' }}">
-        <button type="submit">Suchen</button>
+{% block content %}
+    <form method="GET" action="{{ url_for('home') }}" style="display: flex; gap: 8px; margin-bottom: 24px;">
+        <input type="text" name="q" placeholder="Nach Buchtitel suchen..." value="{{ search_query or '' }}">
+        <button type="submit" class="btn">Suchen</button>
         {% if search_query %}
-            <a href="{{ url_for('home') }}">Suche zurücksetzen</a>
+            <a href="{{ url_for('home') }}" class="btn" style="background: #f1f5f9; color: var(--text-muted);">Reset</a>
         {% endif %}
     </form>
 
-    <h2>Bücherliste</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 1.05rem; color: var(--text-dark); font-weight: 700;">Bibliothek</h3>
+        <div style="font-size: 0.82rem; color: var(--text-muted);">
+            Sortierung:
+            <a href="{{ url_for('home', sort_by='title', q=search_query) }}" style="color: var(--accent-petrol); text-decoration: none; font-weight: 700;">Titel</a> |
+            <a href="{{ url_for('home', sort_by='author', q=search_query) }}" style="color: var(--accent-petrol); text-decoration: none; font-weight: 700;">Autor</a>
+        </div>
+    </div>
 
-    <!-- Sortierung -->
-    <p>
-        Sortieren nach:
-        <a href="{{ url_for('home', sort_by='title', q=search_query) }}">Titel</a> |
-        <a href="{{ url_for('home', sort_by='author', q=search_query) }}">Autor</a>
-    </p>
-
-    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px;">
         {% for book in books %}
-            <div style="border: 1px solid #ccc; padding: 15px; width: 200px; border-radius: 8px;">
-                <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg"
-                     alt="Cover für {{ book.title }}"
-                     style="width: 100%; height: auto; display: block; margin-bottom: 10px;">
+            <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <!-- Dynamische Cover-Box: Bild bei echter ISBN, sonst SVG-Cover -->
+                    <div style="width: 100%; height: 190px; border-radius: 8px; margin-bottom: 10px; overflow: hidden; background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; text-align: center; color: #ffffff; box-shadow: inset 0 0 20px rgba(0,0,0,0.15); position: relative;">
 
-                <h3>{{ book.title }}</h3>
-                <p><strong>Autor:</strong> {{ book.author.name }}</p>
-                <p><strong>Erscheinungsjahr:</strong> {{ book.publication_year or 'Unbekannt' }}</p>
-                <p><small>ISBN: {{ book.isbn }}</small></p>
+                        {% if book.isbn and book.isbn|length >= 10 %}
+                            <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg?default=false"
+                                 alt="{{ book.title }}"
+                                 style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover;"
+                                 onerror="this.style.display='none';">
+                        {% endif %}
 
-                <!-- Löschen-Button -->
-                <form method="POST" action="{{ url_for('delete_book', book_id=book.id) }}" onsubmit="return confirm('Möchtest du dieses Buch wirklich löschen?');" style="margin-top: 10px;">
-                    <button type="submit" style="background-color: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-                        Buch löschen
-                    </button>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.85; margin-bottom: 8px;">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        <span style="font-size: 0.75rem; font-weight: 700; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ book.title }}</span>
+                    </div>
+
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 3px; line-height: 1.25;">{{ book.title }}</div>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">{{ book.author.name }}</div>
+                </div>
+
+                <form method="POST" action="{{ url_for('delete_book', book_id=book.id) }}" onsubmit="return confirm('Buch wirklich löschen?');" style="margin-top: 12px;">
+                    <button type="submit" class="btn btn-danger" style="width: 100%; padding: 6px; font-size: 0.75rem; border-radius: 6px;">Löschen</button>
                 </form>
             </div>
         {% else %}
-            <p>Keine Bücher gefunden, die den Kriterien entsprechen.</p>
+            <p style="color: var(--text-muted); font-size: 0.88rem;">Keine Bücher vorhanden.</p>
         {% endfor %}
     </div>
-</body>
-</html>
+{% endblock %}
